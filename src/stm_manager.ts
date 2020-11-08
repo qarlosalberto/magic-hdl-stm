@@ -1,13 +1,19 @@
-import { CodeLens } from "vscode";
-
-
-
+import { stringify } from "querystring";
 
 class Base {
   search_name_in_array(name: string, arr): number {
     let index: number = -1;
     arr.forEach(function (x, i) {
       if (x.get_name() === name) {
+        index = i;
+      }
+    });
+    return index;
+  }
+  search_destination_in_array(name: string, arr): number {
+    let index: number = -1;
+    arr.forEach(function (x, i) {
+      if (x.get_destination() === name) {
         index = i;
       }
     });
@@ -25,17 +31,36 @@ export class Stm extends Base {
       this.states.push(state);
     }
   }
-  add_transition(state_name: string, transition_name: string) {
+  add_transition(state_name: string, destination: string) {
     let index: number = this.search_name_in_array(state_name, this.states);
+    //State exists
     if (index !== -1) {
-      this.states[index].add_transition_name(transition_name);
+      //Add transition to the state
+      this.states[index].add_transition(destination);
+    }
+    //State doesn't exists
+    else {
+      //Create new state
+      this.add_state(state_name);
+      //Add transition to the state
+      this.add_transition(state_name, destination);
     }
   }
 
-  add_condition(state_name: string, transition_name: string, condition: string) {
+  add_condition(state_name: string, destination: string, condition: string) {
     let index: number = this.search_name_in_array(state_name, this.states);
+    //State exists
     if (index !== -1) {
-      this.states[index].add_transition(transition_name, condition);
+      this.states[index].add_condition_to_transition(destination, condition);
+    }
+    //State doesn't exists
+    else {
+      //Create new state
+      this.add_state(state_name);
+      //Add transition to the state
+      this.add_transition(state_name, destination);
+      //Add condition
+      this.add_condition(state_name, destination, condition);
     }
   }
 
@@ -60,11 +85,36 @@ export class Stm extends Base {
         sm_states += ';\n';
       }
       transitions.forEach(function (i_transition, j) {
-        sm_transitions += `${state_name} => ${i_transition.get_name()} : ${i_transition.get_condition()};\n`;
+        sm_transitions += `${state_name} => ${i_transition.get_destination()} : ${i_transition.get_condition()};\n`;
       });
     });
     return sm_states + sm_transitions;
   }
+
+
+  get_object() {
+    type transition_type = { destination: string, condition: string };
+    type state_type = { name: string, transitions: transition_type[] };
+
+    let stm: state_type[] = [];
+    this.states.forEach(function (i_state, i) {
+      let transitions = i_state.get_transitions();
+      let state_name = i_state.get_name();
+      let state: { name: string, transitions: transition_type[] } = { name: '', transitions: [] };
+      state.name = state_name;
+
+      transitions.forEach(function (i_transition, j) {
+        let transition: transition_type = { destination: '', condition: '' };
+        transition.destination = i_transition.get_destination();
+        transition.condition = i_transition.get_condition();
+        state.transitions.push(transition);
+      });
+      stm.push(state);
+    });
+    return stm;
+  }
+
+
 }
 
 
@@ -88,47 +138,42 @@ export class State extends Base {
     return this.name;
   }
 
-  add_transition(name: string, condition: string) {
-    let transition_index: number = this.search_name_in_array(name, this.transitions);
-    if (transition_index === -1) {
+
+  add_transition(destination: string) {
+    let index: number = this.search_destination_in_array(destination, this.transitions);
+    //Destination doesn't exist
+    if (index === -1) {
       let transition = new Transition();
-      transition.set_name(name);
-      transition.set_condition(condition);
+      transition.set_destination(destination);
       this.transitions.push(transition);
     }
+  }
+
+  add_condition_to_transition(destination: string, condition: string) {
+    let index: number = this.search_destination_in_array(destination, this.transitions);
+    //Destination exists
+    if (index !== -1) {
+      let transition = this.transitions[index];
+      transition.set_condition(condition);
+    }
+    //Destination doesn't exist
     else {
       let transition = new Transition();
-      transition.set_name(name);
-      transition.set_condition(condition);
-      this.transitions[transition_index] = transition;
-    }
-  }
-  add_transition_name(name: string) {
-    let transition_index: number = this.search_name_in_array(name, this.transitions);
-    if (transition_index === -1) {
-      let transition = new Transition();
-      transition.set_name(name);
+      transition.set_destination(destination);
       this.transitions.push(transition);
+      this.add_condition_to_transition(destination, condition);
     }
-  }
-  add_transition_condition(name: string, condition: string): boolean {
-    let transition_index: number = this.search_name_in_array(name, this.transitions);
-    if (transition_index !== -1) {
-      this.add_transition(name, condition);
-      return true;
-    }
-    return false;
   }
 }
 
 
 class Transition {
   private condition: Condition = new Condition();
-  private name: string = '';
+  private destination: string = '';
 
   clear() {
     this.condition = new Condition();
-    this.name = '';
+    this.destination = '';
   }
 
   set_condition(condition: string) {
@@ -137,11 +182,11 @@ class Transition {
   get_condition(): string {
     return this.condition.get_condition();
   }
-  set_name(name: string) {
-    this.name = name;
+  set_destination(destination: string) {
+    this.destination = destination;
   }
-  get_name(): string {
-    return this.name;
+  get_destination(): string {
+    return this.destination;
   }
 }
 
