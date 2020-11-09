@@ -5,25 +5,49 @@
   <meta charset="utf-8">
   <title>TypeScript Compile Demo</title>
 </head>
-<body>
+<body id="body">
 
-  <!-- <div id="clickable">
-    Right Click Me!
-  </div> -->
+  <ul id="menu_state">
+  </ul>
 
-  <!-- <ul id="menu">
-    <li class="menu-item">Action 1</li>
-    <li class="menu-item">Action 2</li>
-    <li class="menu-item">Action 3</li>
-    <li class="menu-item">Action 4</li>
-  </ul> -->
 
-  <!-- <div id="out-click"></div> -->
+  <ul id="menu_transition">
+    <li class="menu-item">Add new state</li>
+    <li class="menu-item">Add transition</li>
+    <li class="menu-item">Remove transition</li>
+  </ul>
 
+  <div id="out-click"></div>
+  
   <h1>TypeScript Compile Demo</h1>
   <svg></svg>
-  <table id="table"></table>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+  <!-- State machine table -->
+  <div id="div_table">
+    <table id="table"></table>
+  </div>
+  
+  <!-- Insert new state -->
+  <div id="i_state" hidden=true>
+    <textarea id="i_state_name" type="textarea">Insert new state</textarea> 
+    <button id="i_state_insert" type="button">Insert</button> 
+    <button id="i_state_cancel" type="button">Cancel</button> 
+  </div>
+
+  <!-- Insert new transition -->
+  <div id="i_tran" hidden=true>
+    <textarea id="i_tran_dest" type="textarea">Insert destination</textarea> 
+    <textarea id="i_tran_cond" type="textarea">Insert condition</textarea> 
+    <button id="i_tran_insert" type="button">Insert</button> 
+    <button id="i_tran_cancel" type="button">Cancel</button> 
+  </div>
+
+  <script>var exports = {"__esModule": true};</script>
+  <script type="text/javascript" src="../out/src/stm_manager.js"></script>
+  <script type="text/javascript" src="context_menu.js"></script>
+  <script type="text/javascript" src="table.js"></script>
   <script type="text/javascript" src="demo.js"></script>
 </body>
 </html>
