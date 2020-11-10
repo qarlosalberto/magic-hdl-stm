@@ -6,6 +6,8 @@ export class Contexmenu {
   constructor(stm_table) {
     this.stm = new Stm();
     this.stm_table = stm_table;
+
+
     // this.clickable = document.getElementById('table');
     this.clickable = document;
     this.menu_state = document.getElementById('menu_state');
@@ -40,6 +42,34 @@ export class Contexmenu {
       menu.classList.add('show');
       this.out_click.style.display = "block";
     });
+    document.getElementById('save-as-json').addEventListener('click', () => {
+      let stm = this.stm.get_object();
+      const a = document.createElement('a');
+      const blob = new Blob([JSON.stringify(stm)]);
+      a.href = URL.createObjectURL(blob);
+      a.download = 'stm.json';
+      a.click();
+    });
+
+    this.load_file = document.getElementById('inp');
+    let element = this;
+    document.getElementById('inp').onchange = function (e) {
+      var file = e.target.files[0];
+      if (!file) { return; }
+      let reader = new FileReader();
+      let stm = this.stm;
+      reader.onload = function (e) {
+        let data = JSON.parse(e.target.result);
+        element.stm.load_json(data);
+      };
+      reader.readAsText(file);
+
+    };
+
+    document.getElementById('load-json').addEventListener('click', () => {
+      document.getElementById('inp').click();
+    });
+
     this.insert_state = new Insert_state(this.stm, this.stm_table);
     this.insert_transition = new Insert_transition(this.stm, this.stm_table);
   }
@@ -87,6 +117,7 @@ export class Contexmenu {
   }
 
   hidden_menu() {
+    console.log("entra")
     this.menu_state.classList.remove('show');
     this.out_click.style.display = "none";
   }
@@ -116,8 +147,6 @@ export class Contexmenu {
   insert_button_event() {
     this.hidden_insert();
   }
-
-
 
   hidden_insert() {
     this.insert_state.hidden();
@@ -246,7 +275,7 @@ function update_graph(svg) {
     document.getElementById('container').removeChild(graph);
   }
   let embed = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  embed.setAttribute('style', 'width: 100%; height: 500px; border:1px solid black;');
+  embed.setAttribute('style', 'width: 100%; height: 720px;');
   embed.setAttribute('type', 'image/svg+xml');
   embed.innerHTML = svg;
   document.getElementById('container').appendChild(embed);
@@ -265,3 +294,4 @@ let pan_config = {
   fit: true,
   center: true,
 };
+

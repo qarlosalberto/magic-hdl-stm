@@ -3,7 +3,7 @@ import { stringify } from "querystring";
 
 // import { smcat } from "../node_modules/state-machine-cat/src/";
 import { render } from "state-machine-cat";
-
+// import * as fs from 'fs';
 
 class Base {
   search_name_in_array(name: string, arr): number {
@@ -37,6 +37,11 @@ class Base {
 
 export class Stm extends Base {
   private states: State[] = [];
+
+  load_json(json) {
+    console.log("load-json");
+  }
+
   get_svg(): string {
     let svg = render(this.get_smcat(), { outputType: "svg" });
     return svg;

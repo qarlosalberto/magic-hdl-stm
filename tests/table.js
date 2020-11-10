@@ -28,7 +28,7 @@ export class Table {
 
   add_state_transition_table(state_name, transition) {
     let row = this.table.insertRow(-1);
-    row.style.backgroundColor = 'grey';
+    row.style.backgroundColor = '#f9f9f9';
     let cell_destination = row.insertCell();
     cell_destination.innerHTML = transition.destination;
     cell_destination.style.width = '50%';

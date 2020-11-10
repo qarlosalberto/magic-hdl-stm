@@ -4,216 +4,60 @@
   <link rel="stylesheet" href="demo.css">
   <meta charset="utf-8">
   <title>Magic HDL state machine</title>
-  <style type="text/css">
-    body {
-    }
-    /* svg{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-    } */
-
-    :root {
-        --light-foreground-color: black;
-        --dark-foreground-color: whitesmoke;
-        --high-contrast-foreground-color: whitesmoke;
-    }
-
-    h1,h2,h3,table {margin-left:5%;margin-right:5%;}
-    td,th,h1,h2,h3 {color: black;}
-    h1,h2 {font-weight:bold;}
-    tr:hover {background-color: #ddd;}
-    td, th {
-        border: 1px solid grey
-    }
-    p {color:black;}
-    p {margin:5%;}
-    th { background-color: #ffd78c;}
-    tr:nth-child(even){background-color: #f2f2f2;}
-
-    html,
-    /* body {
-        height: 100%;
-        overflow: hidden;
-        overflow-y:auto;
-    } */
-
-    body {
-        background: white;
-        display: flex;
-        flex-direction: column;
-        margin: 0;
-        padding: 0;
-    }
-
-    .toolbar {
-        overflow: visible;
-        width: 100%;
-        top: 0;
-        position: absolute;
-        background: gray;
-        box-shadow: black 0 0 1em;
-        color: black;
-        display: flex;
-        font: 12px "Segoe UI", sans-serif;
-        padding: 0.25em;
-        white-space: nowrap;
-        z-index: 2;
-    }
-    .left-panel,
-    .center-panel,
-    .right-panel {
-        align-items: center;
-        display: flex;
-        flex: 1;
-    }
-
-    .center-panel {
-        justify-content: center;
-    }
-
-    .right-panel {
-        justify-content: flex-end;
-    }
-
-    .button {
-        background: dimgray;
-        border: none;
-        box-sizing: border-box;
-        color: whitesmoke;
-        cursor: default;
-        font: inherit;
-        margin: 0.25em;
-        outline: none !important;
-        padding: 0.5em;
-        text-align: center;
-        text-decoration: none !important;
-        transition: background ease-out 125ms, color ease-out 125ms;
-        user-select: none;
-        width: 10em;
-    }
-
-    .button:hover {
-        background: darkgray;
-        box-shadow: inset rgba(255, 255, 255, 0.25) 0 0 1em;
-        color: black;
-    }
-
-    .fancy-checkbox>input:checked+div,
-    .button:active {
-        background: silver;
-        box-shadow: inset rgba(0, 0, 0, 0.25) 0 0 1em;
-        color: black;
-    }
-
-    .fancy-checkbox>input {
-        display: none;
-    }
-
-    .separator {
-        width: 1em;
-    }
-
-    #zoom {
-        color: white;
-        margin: 0.5em;
-    }
-
-    #workspace {
-        cursor: crosshair;
-        flex: 1;
-        overflow: hidden;
-        position: relative;
-        user-select: none;
-    }
-
-    #workspace:focus {
-        outline: none;
-    }
-
-    #image {
-        box-shadow: rgba(0, 0, 0, 0.6) 0 0 3em;
-        max-height: none;
-        max-width: none;
-        position: absolute;
-    }
-
-    #status {
-        align-items: center;
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        display: flex;
-        font: 16px Monaco, Menlo, Consolas, monospace;
-        height: 100%;
-        justify-content: center;
-        margin: 0;
-        position: absolute;
-        width: 100%;
-        z-index: 1;
-    }
-
-    #status:empty {
-        display: none;
-    }
-
-</style>
 
 </head>
   <body id="body">
     <div class="toolbar">
       <div class="center-panel">
           <label class="fancy-checkbox">
-              <input id="add-source" name="zoom-mode" type="radio" value="fixed" />
-              <div class="button">Add source</div>
+              <input id="save-as-vhdl" name="zoom-mode" type="radio" value="fixed" />
+              <div class="button">Save as VHDL</div>
           </label>
           <label class="fancy-checkbox">
-              <input id="clear-graph" name="zoom-mode" type="radio" value="fit"/>
-              <div class="button">Clear graph</div>
+              <input id="save-as-verilog" name="zoom-mode" type="radio" value="fit"/>
+              <div class="button">Save as Verilog</div>
           </label>
           <label class="fancy-checkbox">
-              <input id="generate-documentation-markdown" name="zoom-mode" type="radio" value="fit"/>
-              <div class="button">Save as Markdown</div>
+              <input id="save-as-json" name="zoom-mode" type="radio" value="fit"/>
+              <div class="button">Save as JSON</div>
           </label>
           <label class="fancy-checkbox">
-              <input id="generate-documentation-html" name="zoom-mode" type="radio" value="fit"/>
-              <div class="button">Save as HTML</div>
+              <input id="load-json" name="zoom-mode" type="radio" value="fit"/>
+              <div class="button">Load JSON</div>
           </label>
       </div>
   </div>
   <p></p>
 
-  <div id="container"></div>
 
-  <ul id="menu_state">
-  </ul>
+  <div class="row">
+    <div class="column">
+      <div id="container"></div>
+    </div>
+    <div class="column">
+      <div id="div_table">
+        <table class="table" id="table"></table>
+        <!-- Insert new state -->
+        <div  class="insert_n" id="i_state" hidden=true>
+          <input class="text_area" type="text" id="i_state_name" name="firstname" placeholder="Insert new state...">
+          <button class="button_stm_insert" id="i_state_insert" type="button">Insert</button> 
+          <button class="button_stm_cancel" id="i_state_cancel" type="button">Cancel</button> 
+        </div>
+        <!-- Insert new transition -->
+        <div class="insert_n" id="i_tran" hidden=true>
+          <input class="text_area" type="text" id="i_tran_dest" name="firstname" placeholder="Insert destination state...">
+          <input class="text_area" type="text" id="i_tran_cond" name="firstname" placeholder="Insert condition...">
+          <button class="button_stm_insert" id="i_tran_insert" type="button">Insert</button> 
+          <button class="button_stm_cancel" id="i_tran_cancel" type="button">Cancel</button> 
+        </div>
+      </div>
+    </div>
+  </div>
 
-
-
-
+  <!-- Context menu -->
+  <input id="inp" type='file' style="visibility:hidden;"/>
+  <ul id="menu_state"></ul>
   <div id="out-click"></div>
-  
-
-  <!-- State machine table -->
-  <div id="div_table">
-    <table id="table"></table>
-  </div>
-  
-  <!-- Insert new state -->
-  <div id="i_state" hidden=true>
-    <textarea id="i_state_name" type="textarea">Insert new state</textarea> 
-    <button id="i_state_insert" type="button">Insert</button> 
-    <button id="i_state_cancel" type="button">Cancel</button> 
-  </div>
-
-  <!-- Insert new transition -->
-  <div id="i_tran" hidden=true>
-    <textarea id="i_tran_dest" type="textarea">Insert destination</textarea> 
-    <textarea id="i_tran_cond" type="textarea">Insert condition</textarea> 
-    <button id="i_tran_insert" type="button">Insert</button> 
-    <button id="i_tran_cancel" type="button">Cancel</button> 
-  </div>
 
   <script>var exports = {"__esModule": true};</script>
   <script src="libs/full.render.js"></script>
