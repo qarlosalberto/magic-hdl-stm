@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/class-name-casing */
+import { Stm } from "../out/src/stm_manager";
 
-
-class Contexmenu {
+export class Contexmenu {
   constructor(stm_table) {
     this.stm = new Stm();
     this.stm_table = stm_table;
@@ -19,17 +19,21 @@ class Contexmenu {
       e.preventDefault();
       //Menu state
       let menu;
+
       let state_name = e.target.stm_state_name;
       if (e.target.stm_type === 'state') {
         menu = menu_state;
-        this.configure_menu_state(state_name);
+        this.configure_menu_state(state_name, "state");
       }
       else if (e.target.stm_type === 'transition') {
-        menu = menu_transition;
+        menu = menu_state;
+        let destination = e.target.destination;
+        let condition = e.target.condition;
+        this.configure_menu_state(state_name, "transition", destination, condition);
       }
       else {
         menu = menu_state;
-        this.configure_menu_state(state_name);
+        this.configure_menu_state(state_name, "other");
       }
       menu.style.top = `${e.clientY}px`;
       menu.style.left = `${e.clientX}px`;
@@ -40,7 +44,7 @@ class Contexmenu {
     this.insert_transition = new Insert_transition(this.stm, this.stm_table);
   }
 
-  configure_menu_state(state_name) {
+  configure_menu_state(state_name, type, destination, condition) {
     let element = this;
     menu_state.innerHTML = '';
 
@@ -49,58 +53,61 @@ class Contexmenu {
     li_0.appendChild(document.createTextNode("Add new state"));
     menu_state.appendChild(li_0);
     li_0.addEventListener('click', function () {
-      element.menu_add_state(element);
+      element.menu_add_state();
     });
 
+    if (type === "transition") {
+      let li_1 = document.createElement("li");
+      li_1.setAttribute("class", "menu-item");
+      li_1.appendChild(document.createTextNode("Remove transition"));
+      menu_state.appendChild(li_1);
+      li_1.addEventListener('click', function () {
+        element.menu_remove_transition(state_name, destination, condition);
+      });
+    }
 
-    let li_1 = document.createElement("li");
-    li_1.setAttribute("class", "menu-item");
-    li_1.appendChild(document.createTextNode("Add transition"));
-    menu_state.appendChild(li_1);
-    li_1.addEventListener('click', function () {
-      element.menu_add_transition(element, state_name);
-    });
 
-    let li_2 = document.createElement("li");
-    li_2.setAttribute("class", "menu-item");
-    li_2.appendChild(document.createTextNode("Add new state"));
-    menu_state.appendChild(li_2);
-    li_2.addEventListener('click', function () {
-      menu_remove_state(state_name);
-    });
+    if (type !== "other") {
+      let li_2 = document.createElement("li");
+      li_2.setAttribute("class", "menu-item");
+      li_2.appendChild(document.createTextNode("Add transition"));
+      menu_state.appendChild(li_2);
+      li_2.addEventListener('click', function () {
+        element.menu_add_transition(state_name);
+      });
+
+      let li_3 = document.createElement("li");
+      li_3.setAttribute("class", "menu-item");
+      li_3.appendChild(document.createTextNode("Remove state"));
+      menu_state.appendChild(li_3);
+      li_3.addEventListener('click', function () {
+        element.menu_remove_state(state_name);
+      });
+    }
   }
 
-  hidden_menu(self) {
-    let element = self;
-    if (self === undefined) {
-      element = this;
-    }
-    element.menu_state.classList.remove('show');
-    element.menu_transition.classList.remove('show');
-    element.out_click.style.display = "none";
+  hidden_menu() {
+    this.menu_state.classList.remove('show');
+    this.menu_transition.classList.remove('show');
+    this.out_click.style.display = "none";
   }
 
-  menu_add_state(self) {
-    let element = self;
-    if (self === undefined) {
-      element = this;
-    }
+  menu_add_state() {
     this.hidden_menu();
-    element.hidden_table();
     this.insert_state.show();
   }
   menu_remove_state(state_name) {
     this.hidden_menu();
+    this.insert_state.remove_state(state_name);
   }
-  menu_add_transition(self, state_name) {
-    let element = self;
-    if (self === undefined) {
-      element = this;
-    }
-    element.hidden_menu();
-    element.hidden_table();
-    element.insert_transition.set_state(state_name);
-    element.insert_transition.show();
+  menu_remove_transition(state_name, destination, condition) {
+    this.hidden_menu();
+    this.insert_transition.remove_transition(state_name, destination, condition);
+  }
+  menu_add_transition(state_name) {
+    this.hidden_menu();
+    this.insert_transition.set_state(state_name);
+    this.insert_transition.show();
   }
 
   cancel_button_event() {
@@ -111,22 +118,11 @@ class Contexmenu {
     this.hidden_insert();
   }
 
-  hidden_table(self) {
-    let element = self;
-    if (self === undefined) {
-      element = this;
-    }
-  }
+
 
   hidden_insert() {
     this.insert_state.hidden();
   }
-
-
-
-
-
-
 }
 
 
@@ -142,6 +138,7 @@ class Insert_state {
     this.insert_button = document.getElementById('i_state_insert');
     this.cancel_button = document.getElementById('i_state_cancel');
     this.state_name_box = document.getElementById('i_state_name');
+    this.svg = document.getElementById('svg');
     this.state;
 
     let element = this;
@@ -157,9 +154,22 @@ class Insert_state {
     this.stm_table.add_state(state_name);
     let table_array = this.stm_table.get_object();
     this.table_manager.add_stm_table(table_array);
+    let svg = this.stm_table.get_svg();
+    this.svg.innerHTML = "";
+    this.svg.innerHTML = svg;
     this.hidden();
   }
   cancel_button_event() {
+    this.hidden();
+  }
+
+  remove_state(state_name) {
+    this.stm_table.remove_state(state_name);
+    let table_array = this.stm_table.get_object();
+    this.table_manager.add_stm_table(table_array);
+    let svg = this.stm_table.get_svg();
+    this.svg.innerHTML = "";
+    this.svg.innerHTML = svg;
     this.hidden();
   }
 
@@ -185,6 +195,7 @@ class Insert_transition {
     this.destination_box = document.getElementById('i_tran_dest');
     this.condition_box = document.getElementById('i_tran_cond');
     this.state_name = '';
+    this.svg = document.getElementById('svg');
 
     let element = this;
     this.insert_button.addEventListener('click', () => {
@@ -203,8 +214,22 @@ class Insert_transition {
     this.stm_table.add_condition(state_name, destination, condition);
     let table_array = this.stm_table.get_object();
     this.table_manager.add_stm_table(table_array);
+    let svg = this.stm_table.get_svg();
+    this.svg.innerHTML = "";
+    this.svg.innerHTML = svg;
     this.hidden();
   }
+
+  remove_transition(state_name, destination, condition) {
+    this.stm_table.remove_transition(state_name, destination, condition);
+    let table_array = this.stm_table.get_object();
+    this.table_manager.add_stm_table(table_array);
+    let svg = this.stm_table.get_svg();
+    this.svg.innerHTML = "";
+    this.svg.innerHTML = svg;
+    this.hidden();
+  }
+
   cancel_button_event() {
     this.hidden();
   }

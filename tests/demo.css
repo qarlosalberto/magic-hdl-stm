@@ -5,6 +5,10 @@ td, th {
 th { background-color: #ffd78c; }
 tr:nth-child(even){background-color: #f2f2f2}
 table {width:100%;height:100%;font-size:20px;;page-break-inside: auto}
+svg{
+  width: 100%;
+  height: 100%;
+}
 code {color:#545253;}
 h1{font-size:16px;}
 h2{font-size:13px;}

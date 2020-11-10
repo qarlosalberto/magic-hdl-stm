@@ -3,7 +3,7 @@
 <head>
   <link rel="stylesheet" href="demo.css">
   <meta charset="utf-8">
-  <title>TypeScript Compile Demo</title>
+  <title>Magic HDL state machine</title>
 </head>
 <body id="body">
 
@@ -12,17 +12,12 @@
 
 
   <ul id="menu_transition">
-    <li class="menu-item">Add new state</li>
-    <li class="menu-item">Add transition</li>
-    <li class="menu-item">Remove transition</li>
   </ul>
 
   <div id="out-click"></div>
   
-  <h1>TypeScript Compile Demo</h1>
-  <svg></svg>
-
-
+  <h1>State machine diagram</h1>
+  <svg id="svg"></svg>
 
   <!-- State machine table -->
   <div id="div_table">
@@ -45,9 +40,6 @@
   </div>
 
   <script>var exports = {"__esModule": true};</script>
-  <script type="text/javascript" src="../out/src/stm_manager.js"></script>
-  <script type="text/javascript" src="context_menu.js"></script>
-  <script type="text/javascript" src="table.js"></script>
-  <script type="text/javascript" src="demo.js"></script>
+  <script type="text/javascript" src="../dist/rerender.bundle.js"></script>
 </body>
 </html>

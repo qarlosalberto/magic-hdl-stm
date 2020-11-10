@@ -10,3 +10,4 @@ stm.add_condition('s1', 's0', 'a!b');
 
 let pepe = stm.get_object();
 console.log(stm.get_smcat());
+console.log(stm.get_svg());

@@ -1,9 +1,8 @@
-class Table {
+export class Table {
   constructor(table_dom) {
     this.table = table_dom;
   }
   add_stm_table(stm) {
-    // stm = stm.reverse();
     this.table.innerHTML = '';
     for (let i = 0; i < stm.length; ++i) {
       this.add_state_table(stm[i]);
@@ -18,7 +17,7 @@ class Table {
   }
 
   add_state_name_table(name) {
-    let row = this.table.insertRow(0);
+    let row = this.table.insertRow(-1);
     row.style.backgroundColor = '#ffd78c';
     let cell = row.insertCell(0);
     cell.innerHTML = name;
@@ -28,7 +27,7 @@ class Table {
   }
 
   add_state_transition_table(state_name, transition) {
-    let row = this.table.insertRow(0);
+    let row = this.table.insertRow(-1);
     row.style.backgroundColor = 'grey';
     let cell_destination = row.insertCell();
     cell_destination.innerHTML = transition.destination;

@@ -1,56 +1,24 @@
+import { render } from "state-machine-cat";
+import { Table } from "./table";
+import { Contexmenu } from "./context_menu";
+
+let pText = `
+initial => backlog;
+backlog => doing;
+doing => test;`;
 
 
-// let state_0 = {
-//   'name': 's0',
-//   'transitions': []
-// };
-
-// let transition_0_0 = {
-//   'destination': 's1',
-//   'condition': 'a>10'
-// };
+let pepe = render(pText)
 
 
-// let transition_0_1 = {
-//   'destination': 's2',
-//   'condition': 'a=10'
-// };
-
-// state_0.transitions.push(transition_0_0);
-// state_0.transitions.push(transition_0_1);
-
-
-
-// let state_1 = {
-//   'name': 's1',
-//   'transitions': []
-// };
-
-
-
-// let state_2 = {
-//   'name': 's2',
-//   'transitions': []
-// };
-
-
-// let stm = [];
-
-// stm.push(state_0);
-// stm.push(state_1);
-// stm.push(state_2);
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 // let stm = new Stm();
 let table = document.getElementById("table");
 
-stm_table = new Table(table);
+let stm_table = new Table(table);
 // stm_table.add_stm_table(stm);
 
-context_menu = new Contexmenu(stm_table);
+let context_menu = new Contexmenu(stm_table);
 
 
 // function add_stm_table(stm) {

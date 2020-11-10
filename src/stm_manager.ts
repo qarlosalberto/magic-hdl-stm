@@ -1,4 +1,9 @@
 import { stringify } from "querystring";
+// import smcat = require("state-machine-cat");
+
+// import { smcat } from "../node_modules/state-machine-cat/src/";
+// import smcat from "state-machine-cat/src";
+import { render } from "state-machine-cat";
 
 class Base {
   search_name_in_array(name: string, arr): number {
@@ -19,10 +24,39 @@ class Base {
     });
     return index;
   }
+  search_destination_condition_in_array(destination: string, condition: string, arr): number {
+    let index: number = -1;
+    arr.forEach(function (x, i) {
+      if (x.get_destination() === destination && x.get_condition() === condition) {
+        index = i;
+      }
+    });
+    return index;
+  }
 }
 
 export class Stm extends Base {
   private states: State[] = [];
+  get_svg(): string {
+    let svg = render(this.get_smcat(), { outputType: "svg" });
+    return svg;
+  }
+
+  remove_state(name: string) {
+    let index: number = this.search_name_in_array(name, this.states);
+    if (index !== -1) {
+      this.states.splice(index, 1);
+    }
+  }
+
+  remove_transition(state_name: string, destination: string, condition: string) {
+    let index: number = this.search_name_in_array(state_name, this.states);
+    if (index !== -1) {
+      this.states[index].remove_transition(destination, condition);
+    }
+  }
+
+
   add_state(name: string) {
     let index: number = this.search_name_in_array(name, this.states);
     if (index === -1) {
@@ -138,6 +172,12 @@ export class State extends Base {
     return this.name;
   }
 
+  remove_transition(destination: string, condition) {
+    let index: number = this.search_destination_condition_in_array(destination, condition, this.transitions);
+    if (index !== -1) {
+      this.transitions.splice(index, 1);
+    }
+  }
 
   add_transition(destination: string) {
     let index: number = this.search_destination_in_array(destination, this.transitions);
