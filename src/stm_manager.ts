@@ -2,8 +2,8 @@ import { stringify } from "querystring";
 // import smcat = require("state-machine-cat");
 
 // import { smcat } from "../node_modules/state-machine-cat/src/";
-// import smcat from "state-machine-cat/src";
 import { render } from "state-machine-cat";
+
 
 class Base {
   search_name_in_array(name: string, arr): number {

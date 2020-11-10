@@ -29,6 +29,7 @@
 		"webpack-cli": "^4.2.0"
 	},
 	"dependencies": {
-		"state-machine-cat": "*"
+		"state-machine-cat": "*",
+		"svg-pan-zoom": "*"
 	}
 }

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/class-name-casing */
 import { Stm } from "../out/src/stm_manager";
+import svgPanZoom from "svg-pan-zoom/src/svg-pan-zoom.js";
 
 export class Contexmenu {
   constructor(stm_table) {
@@ -8,7 +9,6 @@ export class Contexmenu {
     // this.clickable = document.getElementById('table');
     this.clickable = document;
     this.menu_state = document.getElementById('menu_state');
-    this.menu_transition = document.getElementById('menu_transition');
     this.out_click = document.getElementById('out-click');
 
     this.out_click.addEventListener('click', () => {
@@ -88,7 +88,6 @@ export class Contexmenu {
 
   hidden_menu() {
     this.menu_state.classList.remove('show');
-    this.menu_transition.classList.remove('show');
     this.out_click.style.display = "none";
   }
 
@@ -126,9 +125,6 @@ export class Contexmenu {
 }
 
 
-
-
-
 class Insert_state {
   constructor(stm_table, table) {
     this.stm_table = stm_table;
@@ -138,9 +134,9 @@ class Insert_state {
     this.insert_button = document.getElementById('i_state_insert');
     this.cancel_button = document.getElementById('i_state_cancel');
     this.state_name_box = document.getElementById('i_state_name');
-    this.svg = document.getElementById('svg');
     this.state;
-
+    this.first = true;
+    this.lastEmbed = undefined;
     let element = this;
     this.insert_button.addEventListener('click', () => {
       this.insert_button_event(element);
@@ -155,8 +151,7 @@ class Insert_state {
     let table_array = this.stm_table.get_object();
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
-    this.svg.innerHTML = "";
-    this.svg.innerHTML = svg;
+    update_graph(svg);
     this.hidden();
   }
   cancel_button_event() {
@@ -168,8 +163,7 @@ class Insert_state {
     let table_array = this.stm_table.get_object();
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
-    this.svg.innerHTML = "";
-    this.svg.innerHTML = svg;
+    update_graph(svg);
     this.hidden();
   }
 
@@ -195,7 +189,6 @@ class Insert_transition {
     this.destination_box = document.getElementById('i_tran_dest');
     this.condition_box = document.getElementById('i_tran_cond');
     this.state_name = '';
-    this.svg = document.getElementById('svg');
 
     let element = this;
     this.insert_button.addEventListener('click', () => {
@@ -215,8 +208,7 @@ class Insert_transition {
     let table_array = this.stm_table.get_object();
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
-    this.svg.innerHTML = "";
-    this.svg.innerHTML = svg;
+    update_graph(svg);
     this.hidden();
   }
 
@@ -225,8 +217,7 @@ class Insert_transition {
     let table_array = this.stm_table.get_object();
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
-    this.svg.innerHTML = "";
-    this.svg.innerHTML = svg;
+    update_graph(svg);
     this.hidden();
   }
 
@@ -248,102 +239,29 @@ class Insert_transition {
 }
 
 
+let graph = undefined;
+function update_graph(svg) {
+  if (graph !== undefined) {
+    svgPanZoom(graph).destroy();
+    document.getElementById('container').removeChild(graph);
+  }
+  let embed = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  embed.setAttribute('style', 'width: 100%; height: 500px; border:1px solid black;');
+  embed.setAttribute('type', 'image/svg+xml');
+  embed.innerHTML = svg;
+  document.getElementById('container').appendChild(embed);
+
+  let pan_zoom = svgPanZoom(embed, pan_config);
+  pan_zoom.zoom(0.5);
+  pan_zoom.center();
+  pan_zoom.resize();
+  graph = embed;
+}
 
 
-
-
-
-
-
-
-
-
-
-
-// clickable.addEventListener('contextmenu', e => {
-//   e.preventDefault();
-//   //Menu state
-//   let menu;
-//   let state_name = e.target.stm_state_name;
-//   if (e.target.stm_type === 'state') {
-//     menu = menu_state;
-//     configure_menu_state(state_name);
-//   }
-//   else if (e.target.stm_type === 'transition') {
-//     menu = menu_transition;
-//   }
-//   menu.style.top = `${e.clientY}px`;
-//   menu.style.left = `${e.clientX}px`;
-//   menu.classList.add('show');
-//   outClick.style.display = "block";
-// });
-
-// function configure_menu_state(state_name) {
-//   menu_state.innerHTML = '';
-
-//   let li_0 = document.createElement("li");
-//   li_0.setAttribute("class", "menu-item");
-//   li_0.appendChild(document.createTextNode("Add new state"));
-//   menu_state.appendChild(li_0);
-//   li_0.addEventListener("click", menu_add_state);
-
-
-//   let li_1 = document.createElement("li");
-//   li_1.setAttribute("class", "menu-item");
-//   li_1.appendChild(document.createTextNode("Add transition"));
-//   menu_state.appendChild(li_1);
-//   li_1.addEventListener('click', function () {
-//     menu_add_transition(state_name);
-//   });
-
-//   let li_2 = document.createElement("li");
-//   li_2.setAttribute("class", "menu-item");
-//   li_2.appendChild(document.createTextNode("Add new state"));
-//   menu_state.appendChild(li_2);
-//   li_2.addEventListener('click', function () {
-//     menu_remove_state(state_name);
-//   });
-// }
-
-// function menu_add_state() {
-//   hidden_menu();
-//   hidden_table();
-// }
-// function menu_remove_state(state_name) {
-//   hidden_menu();
-// }
-// function menu_add_transition(state_name) {
-//   hidden_menu();
-
-// }
-
-// function cancel_button_event() {
-//   hidden_insert();
-// }
-
-// function insert_button_event() {
-//   hidden_insert();
-// }
-
-// function hidden_table() {
-//   insert.hidden = false;
-//   table.hidden = true;
-// }
-
-// function hidden_insert() {
-//   insert.hidden = true;
-//   table.hidden = false;
-// }
-
-// outClick.addEventListener('click', () => {
-//   hidden_menu();
-// });
-
-// function hidden_menu() {
-//   menu_state.classList.remove('show');
-//   menu_transition.classList.remove('show');
-//   outClick.style.display = "none";
-// }
-
-
-
+let pan_config = {
+  zoomEnabled: true,
+  controlIconsEnabled: true,
+  fit: true,
+  center: true,
+};
