@@ -18,8 +18,8 @@ export class Table {
 
   add_state_name_table(name) {
     let row = this.table.insertRow(-1);
-    row.style.backgroundColor = '#ffd78c';
     let cell = row.insertCell(0);
+    cell.style.backgroundColor = '#ffd78c';
     cell.innerHTML = name;
     cell.colSpan = '2';
     cell.stm_type = "state";

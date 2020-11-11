@@ -39,7 +39,15 @@ export class Stm extends Base {
   private states: State[] = [];
 
   load_json(json) {
-    console.log("load-json");
+    this.clear();
+    for (let i = 0; i < json.length; ++i) {
+      let state = json[i];
+      this.add_state(state.name);
+      for (let j = 0; j < state.transitions.length; ++j) {
+        let transition = state.transitions[j];
+        this.add_condition(state.name, transition.destination, transition.condition);
+      }
+    }
   }
 
   get_svg(): string {

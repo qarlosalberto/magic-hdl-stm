@@ -61,10 +61,32 @@ export class Contexmenu {
       reader.onload = function (e) {
         let data = JSON.parse(e.target.result);
         element.stm.load_json(data);
+        let table_array = element.stm.get_object();
+        element.stm_table.add_stm_table(table_array);
+        let svg = element.stm.get_svg();
+        update_graph(svg);
       };
       reader.readAsText(file);
-
     };
+
+    document.getElementById('clear').addEventListener('click', () => {
+      element.stm.clear();
+      let table_array = element.stm.get_object();
+      element.stm_table.add_stm_table(table_array);
+      let svg = element.stm.get_svg();
+      update_graph(svg);
+    });
+
+    document.getElementById('save-as-vhdl').addEventListener('click', () => {
+      var copyhelper = document.createElement("input");
+      copyhelper.className = 'copyhelper'
+      document.body.appendChild(copyhelper);
+      copyhelper.value = "holaaaaaaaaa";
+      copyhelper.select();
+      document.execCommand("copy");
+      document.body.removeChild(copyhelper);
+    });
+
 
     document.getElementById('load-json').addEventListener('click', () => {
       document.getElementById('inp').click();
