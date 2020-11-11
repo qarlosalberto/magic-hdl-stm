@@ -77,11 +77,12 @@ export class Contexmenu {
       update_graph(svg);
     });
 
-    document.getElementById('save-as-vhdl').addEventListener('click', () => {
-      var copyhelper = document.createElement("input");
-      copyhelper.className = 'copyhelper'
+    document.getElementById('code-clipboard').addEventListener('click', () => {
+      var copyhelper = document.createElement("textarea");
+      copyhelper.className = 'copyhelper';
       document.body.appendChild(copyhelper);
-      copyhelper.value = "holaaaaaaaaa";
+      let hdl_code = element.stm.get_hdl_code("vhdl", "one_shot");
+      copyhelper.value = hdl_code;
       copyhelper.select();
       document.execCommand("copy");
       document.body.removeChild(copyhelper);

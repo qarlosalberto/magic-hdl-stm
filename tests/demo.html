@@ -10,12 +10,8 @@
     <div class="toolbar">
       <div class="center-panel">
           <label class="fancy-checkbox">
-              <input id="save-as-vhdl" name="zoom-mode" type="radio" value="fixed" />
-              <div class="button">Save as VHDL</div>
-          </label>
-          <label class="fancy-checkbox">
-              <input id="save-as-verilog" name="zoom-mode" type="radio" value="fit"/>
-              <div class="button">Save as Verilog</div>
+              <input id="code-clipboard" name="zoom-mode" type="radio" value="fixed" />
+              <div class="button">Code to clipboad</div>
           </label>
           <label class="fancy-checkbox">
               <input id="save-as-json" name="zoom-mode" type="radio" value="fit"/>
@@ -57,6 +53,18 @@
       </div>
     </div>
   </div>
+  <div id="config">
+    <label for="config_0">Choose a language:</label>
+    <select id="config_0">
+      <option value="vhdl">VHDL</option>
+      <option value="verilog">Verilog</option>
+    </select>
+    <label id="label_config_1" for="config_1">Choose a type:</label>
+    <select id="config_1">
+      <option value="one_shot">One shot</option>
+    </select>
+  </div>
+
 
   <!-- Context menu -->
   <input id="inp" type='file' style="visibility:hidden;"/>

@@ -1,9 +1,8 @@
 import { stringify } from "querystring";
 // import smcat = require("state-machine-cat");
 
-// import { smcat } from "../node_modules/state-machine-cat/src/";
+import { get_hdl_code } from "./stm_hdl";
 import { render } from "state-machine-cat";
-// import * as fs from 'fs';
 
 class Base {
   search_name_in_array(name: string, arr): number {
@@ -37,6 +36,13 @@ class Base {
 
 export class Stm extends Base {
   private states: State[] = [];
+
+
+  get_hdl_code(language: string, type: string) {
+    let hdl_code: string = get_hdl_code(language, type, this.get_object());
+    console.log(hdl_code);
+    return hdl_code;
+  }
 
   load_json(json) {
     this.clear();
