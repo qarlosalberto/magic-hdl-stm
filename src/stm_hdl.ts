@@ -47,9 +47,13 @@ class Vhdl_code {
     stm_hdl += this.open_proccess();
     stm_hdl += this.open_case();
     for (let i = 0; i < stm.length; ++i) {
-      stm_hdl += this.open_when(stm[i].name);
-      stm_hdl += this.add_outputs(stm[i].outputs);
-      stm_hdl += this.generate_if_case(stm[i].transitions);
+      if (stm[i].transitions.length !== 0 || stm[i].outputs.length !== 0) {
+        stm_hdl += this.open_when(stm[i].name);
+        stm_hdl += this.add_outputs(stm[i].outputs);
+        if (stm[i].transitions.length !== 0) {
+          stm_hdl += this.generate_if_case(stm[i].transitions);
+        }
+      }
     }
     stm_hdl += this.close_case();
     stm_hdl += this.close_proccess();
@@ -110,7 +114,7 @@ class Vhdl_code {
   }
   close_case() {
     let str: string = "";
-    str += this.indent + "case STATE is\n";
+    str += this.indent + "end case;\n";
     return str;
   }
 }
