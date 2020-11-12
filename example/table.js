@@ -47,7 +47,7 @@ export class Table {
     let cell = row.insertCell(0);
     let img = document.createElement('img');
     img.style = "width:100%;heigth:100%";
-    img.src = "resources/sample.gif";
+    img.src = "sample.gif";
     cell.appendChild(img);
 
     this.table.hidden = false;
