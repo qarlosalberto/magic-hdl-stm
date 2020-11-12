@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"webpack": "tsc -p ./; webpack",
+		"build": "tsc -p ./; webpack",
 		"compile": "tsc -p ./",
 		"lint": "eslint src --ext ts",
 		"watch": "tsc -watch -p ./",
