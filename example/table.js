@@ -1,3 +1,20 @@
+// Copyright 2020 Carlos Alberto Ruiz Naranjo
+//
+// This file is part of magic-hdl-stm.
+//
+// magic-hdl-stm is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// magic-hdl-stm is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with magic-hdl-stm.  If not, see <https://www.gnu.org/licenses/>.
+
 export class Table {
   constructor(table_dom) {
     this.table = table_dom;
@@ -30,7 +47,7 @@ export class Table {
     let cell = row.insertCell(0);
     let img = document.createElement('img');
     img.style = "width:100%;heigth:100%";
-    img.src = "./sample_2.gif";
+    img.src = "resources/sample.gif";
     cell.appendChild(img);
 
     this.table.hidden = false;

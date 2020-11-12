@@ -1,3 +1,20 @@
+// Copyright 2020 Carlos Alberto Ruiz Naranjo
+//
+// This file is part of magic-hdl-stm.
+//
+// magic-hdl-stm is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// magic-hdl-stm is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with magic-hdl-stm.  If not, see <https://www.gnu.org/licenses/>.
+
 /* eslint-disable @typescript-eslint/class-name-casing */
 export function get_hdl_code(language: string, type: string, stm): string {
   let stm_hdl: string = "";
@@ -18,19 +35,20 @@ class Vhdl_code {
 
   get_vhdl_code(type: string, stm): string {
     let stm_hdl: string = "";
-    if (type === "one_shot") {
-      stm_hdl = this.get_vhdl_one_shot(stm);
+    if (type === "one_process") {
+      stm_hdl = this.get_vhdl_one_process(stm);
 
     }
     return stm_hdl;
   }
 
-  get_vhdl_one_shot(stm): string {
+  get_vhdl_one_process(stm): string {
     let stm_hdl: string = "";
     stm_hdl += this.open_proccess();
     stm_hdl += this.open_case();
     for (let i = 0; i < stm.length; ++i) {
       stm_hdl += this.open_when(stm[i].name);
+      stm_hdl += this.add_outputs(stm[i].outputs);
       stm_hdl += this.generate_if_case(stm[i].transitions);
     }
     stm_hdl += this.close_case();
@@ -41,6 +59,19 @@ class Vhdl_code {
   open_when(state_name: string) {
     let str: string = "";
     str += this.indent2 + `when ${state_name} =>\n`;
+    return str;
+  }
+
+  add_outputs(outputs) {
+    let str: string = "";
+    for (let i = 0; i < outputs.length; ++i) {
+      let output = outputs[i];
+      output = output.trim();
+      if (output[output.length - 1] !== ';') {
+        output += ';';
+      }
+      str += this.indent3 + `${output}\n`;
+    }
     return str;
   }
 

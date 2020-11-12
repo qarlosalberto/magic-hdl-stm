@@ -1,7 +1,24 @@
+ <!-- Copyright 2020 Carlos Alberto Ruiz Naranjo
+
+ This file is part of magic-hdl-stm.
+
+ magic-hdl-stm is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ magic-hdl-stm is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with magic-hdl-stm.  If not, see <https://www.gnu.org/licenses/>. -->
+
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="demo.css">
+  <link rel="stylesheet" href="resources/index.css">
   <meta charset="utf-8">
   <title>Magic HDL state machine</title>
 
@@ -43,6 +60,12 @@
           <button class="button_stm_insert" id="i_state_insert" type="button">Insert</button> 
           <button class="button_stm_cancel" id="i_state_cancel" type="button">Cancel</button> 
         </div>
+        <!-- Insert new output -->
+        <div  class="insert_n" id="i_output" hidden=true>
+          <input class="text_area" type="text" id="i_output_name" name="firstname" placeholder="Insert new output...">
+          <button class="button_stm_insert" id="i_output_insert" type="button">Insert</button> 
+          <button class="button_stm_cancel" id="i_output_cancel" type="button">Cancel</button> 
+        </div>
         <!-- Insert new transition -->
         <div class="insert_n" id="i_tran" hidden=true>
           <input class="text_area" type="text" id="i_tran_dest" name="firstname" placeholder="Insert destination state...">
@@ -61,7 +84,7 @@
     </select>
     <label id="label_config_1" for="config_1">Choose a type:</label>
     <select id="config_1">
-      <option value="one_shot">One shot</option>
+      <option value="one_process">One process</option>
     </select>
   </div>
 
@@ -72,7 +95,6 @@
   <div id="out-click"></div>
 
   <script>var exports = {"__esModule": true};</script>
-  <script src="libs/full.render.js"></script>
-  <script type="text/javascript" src="./rerender.bundle.js"></script>
+  <script type="text/javascript" src="magic_hdl_smt.bundle.js"></script>
 </body>
 </html>

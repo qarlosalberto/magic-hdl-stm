@@ -1,9 +1,9 @@
 module.exports = () => {
   return {
-    entry: "./tests/demo.js",
+    entry: "./example/index.js",
     mode: "development",
     output: {
-      filename: `rerender.bundle.js`
+      filename: `../example/magic_hdl_smt.bundle.js`
     }
   };
 };

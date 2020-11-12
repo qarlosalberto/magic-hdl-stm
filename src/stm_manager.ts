@@ -1,9 +1,26 @@
-import { stringify } from "querystring";
-// import smcat = require("state-machine-cat");
+// Copyright 2020 Carlos Alberto Ruiz Naranjo
+//
+// This file is part of magic-hdl-stm.
+//
+// magic-hdl-stm is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// magic-hdl-stm is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with magic-hdl-stm.  If not, see <https://www.gnu.org/licenses/>.
 
 import { get_hdl_code } from "./stm_hdl";
 import { render } from "state-machine-cat";
 
+////////////////////////////////////////////////////////////////////////////////
+// Base
+////////////////////////////////////////////////////////////////////////////////
 class Base {
   search_name_in_array(name: string, arr): number {
     let index: number = -1;
@@ -23,6 +40,15 @@ class Base {
     });
     return index;
   }
+  search_output_in_array(output: string, arr): number {
+    let index: number = -1;
+    arr.forEach(function (x, i) {
+      if (x.get_output() === output) {
+        index = i;
+      }
+    });
+    return index;
+  }
   search_destination_condition_in_array(destination: string, condition: string, arr): number {
     let index: number = -1;
     arr.forEach(function (x, i) {
@@ -34,6 +60,9 @@ class Base {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Stm
+////////////////////////////////////////////////////////////////////////////////
 export class Stm extends Base {
   private states: State[] = [];
 
@@ -49,6 +78,10 @@ export class Stm extends Base {
     for (let i = 0; i < json.length; ++i) {
       let state = json[i];
       this.add_state(state.name);
+      for (let j = 0; j < state.outputs.length; ++j) {
+        let output = state.outputs[j];
+        this.add_output(state.name, output);
+      }
       for (let j = 0; j < state.transitions.length; ++j) {
         let transition = state.transitions[j];
         this.add_condition(state.name, transition.destination, transition.condition);
@@ -65,6 +98,20 @@ export class Stm extends Base {
     let index: number = this.search_name_in_array(name, this.states);
     if (index !== -1) {
       this.states.splice(index, 1);
+    }
+  }
+
+  add_output(state_name: string, output: string) {
+    let index: number = this.search_name_in_array(state_name, this.states);
+    if (index !== -1) {
+      this.states[index].add_output(output);
+    }
+  }
+
+  remove_output(state_name: string, output: string) {
+    let index: number = this.search_name_in_array(state_name, this.states);
+    if (index !== -1) {
+      this.states[index].remove_output(output);
     }
   }
 
@@ -147,14 +194,20 @@ export class Stm extends Base {
 
   get_object() {
     type transition_type = { destination: string, condition: string };
-    type state_type = { name: string, transitions: transition_type[] };
+    type state_type = { name: string, transitions: transition_type[], outputs: string[] };
 
     let stm: state_type[] = [];
     this.states.forEach(function (i_state, i) {
       let transitions = i_state.get_transitions();
+      let outputs = i_state.get_outputs();
       let state_name = i_state.get_name();
-      let state: { name: string, transitions: transition_type[] } = { name: '', transitions: [] };
+      let state: { name: string, transitions: transition_type[], outputs: string[] } =
+        { name: '', transitions: [], outputs: [] };
       state.name = state_name;
+
+      outputs.forEach(function (i_output, j) {
+        state.outputs.push(i_output.get_output());
+      });
 
       transitions.forEach(function (i_transition, j) {
         let transition: transition_type = { destination: '', condition: '' };
@@ -166,17 +219,22 @@ export class Stm extends Base {
     });
     return stm;
   }
-
-
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
+// State
+////////////////////////////////////////////////////////////////////////////////
 export class State extends Base {
   private transitions: Transition[] = [];
+  private outputs: Output[] = [];
   private name: string = '';
 
   get_transitions() {
     return this.transitions;
+  }
+
+  get_outputs() {
+    return this.outputs;
   }
 
   clear() {
@@ -189,6 +247,23 @@ export class State extends Base {
   }
   get_name() {
     return this.name;
+  }
+
+  add_output(output: string) {
+    let index: number = this.search_output_in_array(output, this.outputs);
+    //Output doesn't exist
+    if (index === -1) {
+      let output_n = new Output();
+      output_n.set_output(output);
+      this.outputs.push(output_n);
+    }
+  }
+
+  remove_output(output: string) {
+    let index: number = this.search_output_in_array(output, this.outputs);
+    if (index !== -1) {
+      this.outputs.splice(index, 1);
+    }
   }
 
   remove_transition(destination: string, condition) {
@@ -225,7 +300,9 @@ export class State extends Base {
   }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
+// Transition
+////////////////////////////////////////////////////////////////////////////////
 class Transition {
   private condition: Condition = new Condition();
   private destination: string = '';
@@ -249,6 +326,9 @@ class Transition {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Condition
+////////////////////////////////////////////////////////////////////////////////
 class Condition {
   private condition: string = '';
   set_condition(new_condition: string) {
@@ -256,5 +336,18 @@ class Condition {
   }
   get_condition(): string {
     return this.condition;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Output
+////////////////////////////////////////////////////////////////////////////////
+class Output {
+  private output: string = '';
+  set_output(new_output: string) {
+    this.output = new_output;
+  }
+  get_output(): string {
+    return this.output;
   }
 }
