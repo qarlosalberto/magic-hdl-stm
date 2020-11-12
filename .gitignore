@@ -2,3 +2,4 @@ out
 node_modules
 .vscode-test/
 *.vsix
+example/magic_hdl_smt.bundle.js
