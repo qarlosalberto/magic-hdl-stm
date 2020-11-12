@@ -6,4 +6,4 @@ module.exports = () => {
       filename: `../example/magic_hdl_smt.bundle.js`
     }
   };
-};
+}; 
