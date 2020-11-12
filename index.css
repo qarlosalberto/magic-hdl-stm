@@ -107,7 +107,7 @@ body {
     justify-content: flex-end;
 }
 
-.button {
+.button, .a.button {
     background: dimgray;
     border: none;
     box-sizing: border-box;
@@ -253,7 +253,9 @@ body {
   box-sizing: border-box;
 }
 
-
+#info {
+  margin-left: 85%;
+}
 
 
 
