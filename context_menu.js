@@ -117,7 +117,10 @@ export class Contexmenu {
       var copyhelper = document.createElement("textarea");
       copyhelper.className = 'copyhelper';
       document.body.appendChild(copyhelper);
-      let hdl_code = element.stm.get_hdl_code("vhdl", "one_process");
+      let language = document.getElementById('config_0').value;
+      let type = document.getElementById('config_1').value;
+
+      let hdl_code = element.stm.get_hdl_code(language, type);
       copyhelper.value = hdl_code;
       copyhelper.select();
       document.execCommand("copy");
