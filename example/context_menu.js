@@ -134,6 +134,7 @@ export class Contexmenu {
     this.insert_output = new Insert_output(this.stm, this.stm_table);
     this.insert_state = new Insert_state(this.stm, this.stm_table);
     this.insert_transition = new Insert_transition(this.stm, this.stm_table);
+    this.edit_transition = new Edit_transition(this.stm, this.stm_table);
   }
 
   configure_menu_state(parameters) {
@@ -161,6 +162,14 @@ export class Contexmenu {
       menu_state.appendChild(li_1);
       li_1.addEventListener('click', function () {
         element.menu_remove_transition(state_name, destination, condition);
+      });
+
+      let li_6 = document.createElement("li");
+      li_6.setAttribute("class", "menu-item");
+      li_6.appendChild(document.createTextNode("Edit transition"));
+      menu_state.appendChild(li_6);
+      li_6.addEventListener('click', function () {
+        element.menu_edit_transition(state_name, destination, condition);
       });
     }
 
@@ -223,6 +232,12 @@ export class Contexmenu {
     this.hidden_menu();
     this.insert_transition.set_state(state_name);
     this.insert_transition.show();
+  }
+  menu_edit_transition(state_name, destination, condition) {
+    this.hidden_menu();
+    this.edit_transition.set_state(state_name);
+    this.edit_transition.set_transition(destination, condition);
+    this.edit_transition.show();
   }
   menu_add_output(state_name) {
     this.hidden_menu();
@@ -412,6 +427,67 @@ class Insert_transition {
   }
 }
 
+class Edit_transition {
+  constructor(stm_table, table) {
+    this.stm_table = stm_table;
+    this.table_manager = table;
+    this.table = document.getElementById('table');
+    this.div = document.getElementById('e_tran');
+    this.insert_button = document.getElementById('e_tran_insert');
+    this.cancel_button = document.getElementById('e_tran_cancel');
+    this.destination_box = document.getElementById('e_tran_dest');
+    this.condition_box = document.getElementById('e_tran_cond');
+    this.state_name = '';
+    this.destination = '';
+    this.condition = '';
+
+    let element = this;
+    this.insert_button.addEventListener('click', () => {
+      this.insert_button_event(element);
+    });
+    this.cancel_button.addEventListener('click', () => {
+      this.cancel_button_event(element);
+    });
+  }
+  insert_button_event() {
+    let state_name = this.state_name;
+    let old_destination = this.destination;
+    let old_condition = this.condition;
+
+    let new_destination = this.destination_box.value;
+    let new_condition = this.condition_box.value;
+
+    this.stm_table.edit_transition(state_name, old_destination, old_condition, new_destination, new_condition);
+
+    let table_array = this.stm_table.get_object();
+    this.table_manager.add_stm_table(table_array);
+    let svg = this.stm_table.get_svg();
+    update_graph(svg);
+    this.hidden();
+  }
+
+  cancel_button_event() {
+    this.hidden();
+  }
+
+  hidden() {
+    this.div.hidden = true;
+    this.table.hidden = false;
+  }
+  set_state(state_name) {
+    this.state_name = state_name;
+  }
+  set_transition(destination, condition) {
+    this.destination = destination;
+    this.condition = condition;
+  }
+  show() {
+    this.destination_box.value = this.destination;
+    this.condition_box.value = this.condition;
+    this.div.hidden = false;
+    this.table.hidden = true;
+  }
+}
 
 let graph = undefined;
 function update_graph(svg) {

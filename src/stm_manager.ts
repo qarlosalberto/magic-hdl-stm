@@ -122,6 +122,13 @@ export class Stm extends Base {
     }
   }
 
+  edit_transition(state_name: string, old_destination: string, old_condition: string,
+    new_destination: string, new_condition: string) {
+    let index: number = this.search_name_in_array(state_name, this.states);
+    if (index !== -1) {
+      this.states[index].edit_transition(old_destination, old_condition, new_destination, new_condition);
+    }
+  }
 
   add_state(name: string) {
     let index: number = this.search_name_in_array(name, this.states);
@@ -270,6 +277,14 @@ export class State extends Base {
     let index: number = this.search_destination_condition_in_array(destination, condition, this.transitions);
     if (index !== -1) {
       this.transitions.splice(index, 1);
+    }
+  }
+
+  edit_transition(old_destination: string, old_condition, new_destination: string, new_condition) {
+    let index: number = this.search_destination_condition_in_array(old_destination, old_condition, this.transitions);
+    if (index !== -1) {
+      this.transitions[index].set_destination(new_destination);
+      this.transitions[index].set_condition(new_condition);
     }
   }
 
