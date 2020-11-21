@@ -57,26 +57,34 @@
         <table class="table" id="table"></table>
         <!-- Insert new state -->
         <div  class="insert_n" id="i_state" hidden=true>
+          <label id="label_exp">State name:</label>
           <input class="text_area" type="text" id="i_state_name" name="firstname" placeholder="Insert new state...">
           <button class="button_stm_insert" id="i_state_insert" type="button">Insert</button> 
           <button class="button_stm_cancel" id="i_state_cancel" type="button">Cancel</button> 
         </div>
         <!-- Insert new output -->
         <div  class="insert_n" id="i_output" hidden=true>
+          <label id="label_exp">Output:</label>
           <input class="text_area" type="text" id="i_output_name" name="firstname" placeholder="Insert new output...">
           <button class="button_stm_insert" id="i_output_insert" type="button">Insert</button> 
           <button class="button_stm_cancel" id="i_output_cancel" type="button">Cancel</button> 
         </div>
         <!-- Insert new transition -->
         <div class="insert_n" id="i_tran" hidden=true>
-          <input class="text_area" type="text" id="i_tran_dest" name="firstname" placeholder="Insert destination state...">
+          <!-- <input class="text_area" type="text" id="i_tran_dest" name="firstname" placeholder="Insert destination state..."> -->
+          <label id="label_exp">Destination:</label>
+          <select id="i_tran_dest"></select>
+          <label id="label_exp">Condition:</label>
           <input class="text_area" type="text" id="i_tran_cond" name="firstname" placeholder="Insert condition...">
           <button class="button_stm_insert" id="i_tran_insert" type="button">Insert</button> 
           <button class="button_stm_cancel" id="i_tran_cancel" type="button">Cancel</button> 
         </div>
         <!-- Edit transition -->
         <div class="insert_n" id="e_tran" hidden=true>
-          <input class="text_area" type="text" id="e_tran_dest" name="firstname" placeholder="Insert destination state...">
+          <!-- <input class="text_area" type="text" id="e_tran_dest" name="firstname" placeholder="Insert destination state..."> -->
+          <label id="label_exp" for="e_tran_dest">Destination:</label>
+          <select id="e_tran_dest"></select>
+          <label id="label_exp">Condition:</label>
           <input class="text_area" type="text" id="e_tran_cond" name="firstname" placeholder="Insert condition...">
           <button class="button_stm_insert" id="e_tran_insert" type="button">Insert</button> 
           <button class="button_stm_cancel" id="e_tran_cancel" type="button">Cancel</button> 
