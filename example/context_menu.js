@@ -40,12 +40,16 @@ export class Contexmenu {
       let menu;
       let parameters = {
         state_name: "",
+        states_name: "",
         type: "",
         destination: "",
         condition: "",
         output: ""
       };
       parameters.state_name = e.target.stm_state_name;
+      if (e.target.stm_states_name !== undefined) {
+        parameters.states_name = e.target.stm_states_name.split(',');
+      }
       parameters.type = e.target.stm_type;
       parameters.destination = e.target.destination;
       parameters.condition = e.target.condition;
@@ -143,6 +147,7 @@ export class Contexmenu {
     let destination = parameters.destination;
     let condition = parameters.condition;
     let output = parameters.output;
+    let states_name = parameters.states_name;
 
     let element = this;
     menu_state.innerHTML = '';
@@ -169,7 +174,7 @@ export class Contexmenu {
       li_6.appendChild(document.createTextNode("Edit transition"));
       menu_state.appendChild(li_6);
       li_6.addEventListener('click', function () {
-        element.menu_edit_transition(state_name, destination, condition);
+        element.menu_edit_transition(state_name, destination, condition, states_name);
       });
     }
 
@@ -179,7 +184,7 @@ export class Contexmenu {
       li_2.appendChild(document.createTextNode("Add transition"));
       menu_state.appendChild(li_2);
       li_2.addEventListener('click', function () {
-        element.menu_add_transition(state_name);
+        element.menu_add_transition(state_name, states_name);
       });
 
       let li_3 = document.createElement("li");
@@ -228,14 +233,16 @@ export class Contexmenu {
     this.hidden_menu();
     this.insert_transition.remove_transition(state_name, destination, condition);
   }
-  menu_add_transition(state_name) {
+  menu_add_transition(state_name, states_name) {
     this.hidden_menu();
     this.insert_transition.set_state(state_name);
+    this.insert_transition.set_states(states_name);
     this.insert_transition.show();
   }
-  menu_edit_transition(state_name, destination, condition) {
+  menu_edit_transition(state_name, destination, condition, states_name) {
     this.hidden_menu();
     this.edit_transition.set_state(state_name);
+    this.edit_transition.set_states(states_name);
     this.edit_transition.set_transition(destination, condition);
     this.edit_transition.show();
   }
@@ -389,6 +396,16 @@ class Insert_transition {
 
 
   }
+
+  set_states(states) {
+    this.destination_box.innerHTML = '';
+    for (const x in states) {
+      let option = document.createElement("option");
+      option.text = states[x];
+      this.destination_box.add(option);
+    }
+  }
+
   insert_button_event() {
     let state_name = this.state_name;
     let destination = this.destination_box.value;
@@ -476,6 +493,14 @@ class Edit_transition {
   }
   set_state(state_name) {
     this.state_name = state_name;
+  }
+  set_states(states) {
+    this.destination_box.innerHTML = '';
+    for (const x in states) {
+      let option = document.createElement("option");
+      option.text = states[x];
+      this.destination_box.add(option);
+    }
   }
   set_transition(destination, condition) {
     this.destination = destination;

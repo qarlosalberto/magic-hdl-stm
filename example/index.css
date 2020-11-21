@@ -253,6 +253,18 @@ body {
   box-sizing: border-box;
 }
 
+#e_tran_dest, #i_tran_dest {
+  width:100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
 
+#label_exp {
+  color: black
+}
 
 
