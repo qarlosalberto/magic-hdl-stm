@@ -209,7 +209,7 @@ body {
   font-size: 16px;
 }
 
-.text_area {
+#i_state_name, #i_output_name, #i_tran_cond, #e_tran_cond, #e_output_output {
   width: 100%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -236,7 +236,7 @@ body {
 
 
 #config {
-  margin-left: 6%;
+  margin-left: 3%;
 }
 
 #label_config_1 {
@@ -244,7 +244,7 @@ body {
 }
 
 #config_0, #config_1 {
-  width:150px;
+  width:7%;
   padding: 12px 20px;
   margin: 8px 0;
   display: inline-block;
@@ -268,3 +268,31 @@ body {
 }
 
 
+#state_name, #reset_state, #clock_name {
+  width: 5%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#reset_signal{
+  width: 8%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#reset_enable {
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
