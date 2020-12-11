@@ -82,6 +82,21 @@ export class Contexmenu {
       this.out_click.style.display = "block";
     });
     document.getElementById('save-as-json').addEventListener('click', () => {
+      let state_name = document.getElementById('state_name').value;
+      let clock_name = document.getElementById('clock_name').value;
+      let reset_enable = document.getElementById('reset_enable').checked;
+      let reset_condition = document.getElementById('reset_signal').value;
+      let reset_state = document.getElementById('reset_state').value;
+
+      let config = {
+        'state_name': state_name,
+        'clock_name': clock_name,
+        'reset_condition': reset_condition,
+        'reset_state': reset_state,
+        'reset_enable': reset_enable
+      };
+      this.stm.set_config(config);
+
       let stm = this.stm.get_object();
       const a = document.createElement('a');
       const blob = new Blob([JSON.stringify(stm)]);
@@ -100,7 +115,22 @@ export class Contexmenu {
       reader.onload = function (e) {
         let data = JSON.parse(e.target.result);
         element.stm.load_json(data);
-        let table_array = element.stm.get_object();
+
+        let state_name = document.getElementById('state_name');
+        let clock_name = document.getElementById('clock_name');
+        let reset_enable = document.getElementById('reset_enable');
+        let reset_condition = document.getElementById('reset_signal');
+        let reset_state = document.getElementById('reset_state');
+
+        let config = element.stm.get_config();
+
+        state_name.value = config.state_name;
+        clock_name.value = config.clock_name;
+        reset_enable.checked = config.reset_enable;
+        reset_condition.value = config.reset_condition;
+        reset_state.value = config.reset_state;
+
+        let table_array = element.stm.get_object().stm;
         element.stm_table.add_stm_table(table_array);
         let svg = element.stm.get_svg();
         update_graph(svg);
@@ -110,8 +140,6 @@ export class Contexmenu {
 
     document.getElementById('clear').addEventListener('click', () => {
       element.stm.clear();
-      let table_array = element.stm.get_object();
-      // element.stm_table.add_stm_table(table_array);
       element.stm_table.clear();
       let svg = element.stm.get_svg();
       update_graph(svg);
@@ -122,9 +150,23 @@ export class Contexmenu {
       copyhelper.className = 'copyhelper';
       document.body.appendChild(copyhelper);
       let language = document.getElementById('config_0').value;
-      let type = document.getElementById('config_1').value;
 
-      let hdl_code = element.stm.get_hdl_code(language, type);
+      let state_name = document.getElementById('state_name').value;
+      let clock_name = document.getElementById('clock_name').value;
+      let reset_enable = document.getElementById('reset_enable').checked;
+      let reset_condition = document.getElementById('reset_signal').value;
+      let reset_state = document.getElementById('reset_state').value;
+
+      let config = {
+        'state_name': state_name,
+        'clock_name': clock_name,
+        'reset_condition': reset_condition,
+        'reset_state': reset_state,
+        'reset_enable': reset_enable
+      };
+      element.stm.set_config(config);
+
+      let hdl_code = element.stm.get_hdl_code(language);
       copyhelper.value = hdl_code;
       copyhelper.select();
       document.execCommand("copy");
@@ -136,6 +178,7 @@ export class Contexmenu {
       document.getElementById('inp').click();
     });
     this.insert_output = new Insert_output(this.stm, this.stm_table);
+    this.edit_output = new Edit_output(this.stm, this.stm_table);
     this.insert_state = new Insert_state(this.stm, this.stm_table);
     this.insert_transition = new Insert_transition(this.stm, this.stm_table);
     this.edit_transition = new Edit_transition(this.stm, this.stm_table);
@@ -160,6 +203,24 @@ export class Contexmenu {
       element.menu_add_state();
     });
 
+    if (type !== "others") {
+      let li_3 = document.createElement("li");
+      li_3.setAttribute("class", "menu-item");
+      li_3.appendChild(document.createTextNode("Remove state"));
+      menu_state.appendChild(li_3);
+      li_3.addEventListener('click', function () {
+        element.menu_remove_state(state_name);
+      });
+
+      let li_2 = document.createElement("li");
+      li_2.setAttribute("class", "menu-item");
+      li_2.appendChild(document.createTextNode("Add transition"));
+      menu_state.appendChild(li_2);
+      li_2.addEventListener('click', function () {
+        element.menu_add_transition(state_name, states_name);
+      });
+    }
+
     if (type === "transition") {
       let li_1 = document.createElement("li");
       li_1.setAttribute("class", "menu-item");
@@ -175,24 +236,6 @@ export class Contexmenu {
       menu_state.appendChild(li_6);
       li_6.addEventListener('click', function () {
         element.menu_edit_transition(state_name, destination, condition, states_name);
-      });
-    }
-
-    if (type !== "other") {
-      let li_2 = document.createElement("li");
-      li_2.setAttribute("class", "menu-item");
-      li_2.appendChild(document.createTextNode("Add transition"));
-      menu_state.appendChild(li_2);
-      li_2.addEventListener('click', function () {
-        element.menu_add_transition(state_name, states_name);
-      });
-
-      let li_3 = document.createElement("li");
-      li_3.setAttribute("class", "menu-item");
-      li_3.appendChild(document.createTextNode("Remove state"));
-      menu_state.appendChild(li_3);
-      li_3.addEventListener('click', function () {
-        element.menu_remove_state(state_name);
       });
     }
 
@@ -212,6 +255,14 @@ export class Contexmenu {
       menu_state.appendChild(li_5);
       li_5.addEventListener('click', function () {
         element.menu_remove_output(state_name, output);
+      });
+
+      let li_8 = document.createElement("li");
+      li_8.setAttribute("class", "menu-item");
+      li_8.appendChild(document.createTextNode("Edit output"));
+      menu_state.appendChild(li_8);
+      li_8.addEventListener('click', function () {
+        element.menu_edit_output(state_name, output);
       });
     }
   }
@@ -255,6 +306,12 @@ export class Contexmenu {
     this.hidden_menu();
     this.insert_output.remove_output(state_name, output);
   }
+  menu_edit_output(state_name, output) {
+    this.hidden_menu();
+    this.edit_output.set_state(state_name);
+    this.edit_output.set_output(output);
+    this.edit_output.show();
+  }
   cancel_button_event() {
     this.hidden_insert();
   }
@@ -292,7 +349,7 @@ class Insert_state {
   insert_button_event() {
     let state_name = this.state_name_box.value;
     this.stm_table.add_state(state_name);
-    let table_array = this.stm_table.get_object();
+    let table_array = this.stm_table.get_object().stm;
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
     update_graph(svg);
@@ -304,7 +361,7 @@ class Insert_state {
 
   remove_state(state_name) {
     this.stm_table.remove_state(state_name);
-    let table_array = this.stm_table.get_object();
+    let table_array = this.stm_table.get_object().stm;
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
     update_graph(svg);
@@ -345,7 +402,7 @@ class Insert_output {
   insert_button_event() {
     let output_name = this.output_name_box.value;
     this.stm_table.add_output(this.state_name, output_name);
-    let table_array = this.stm_table.get_object();
+    let table_array = this.stm_table.get_object().stm;
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
     update_graph(svg);
@@ -357,7 +414,7 @@ class Insert_output {
 
   remove_output(state_name, output) {
     this.stm_table.remove_output(state_name, output);
-    let table_array = this.stm_table.get_object();
+    let table_array = this.stm_table.get_object().stm;
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
     update_graph(svg);
@@ -369,6 +426,59 @@ class Insert_output {
     this.table.hidden = false;
   }
   show() {
+    this.div.hidden = false;
+    this.table.hidden = true;
+  }
+}
+
+class Edit_output {
+  constructor(stm_table, table) {
+    this.stm_table = stm_table;
+    this.table_manager = table;
+    this.table = document.getElementById('table');
+    this.div = document.getElementById('e_output');
+    this.insert_button = document.getElementById('e_output_insert');
+    this.cancel_button = document.getElementById('e_output_cancel');
+    this.output_box = document.getElementById('e_output_output');
+    this.state_name = '';
+
+    let element = this;
+    this.insert_button.addEventListener('click', () => {
+      this.insert_button_event(element);
+    });
+    this.cancel_button.addEventListener('click', () => {
+      this.cancel_button_event(element);
+    });
+  }
+  insert_button_event() {
+    let state_name = this.state_name;
+    let old_output = this.output;
+    let new_output = this.output_box.value;
+
+    this.stm_table.edit_output(state_name, old_output, new_output);
+
+    let table_array = this.stm_table.get_object().stm;
+    this.table_manager.add_stm_table(table_array);
+    let svg = this.stm_table.get_svg();
+    update_graph(svg);
+    this.hidden();
+  }
+
+  cancel_button_event() {
+    this.hidden();
+  }
+  hidden() {
+    this.div.hidden = true;
+    this.table.hidden = false;
+  }
+  set_state(state_name) {
+    this.state_name = state_name;
+  }
+  set_output(output) {
+    this.output = output;
+  }
+  show() {
+    this.output_box.value = this.output;
     this.div.hidden = false;
     this.table.hidden = true;
   }
@@ -393,8 +503,6 @@ class Insert_transition {
     this.cancel_button.addEventListener('click', () => {
       this.cancel_button_event(element);
     });
-
-
   }
 
   set_states(states) {
@@ -411,7 +519,7 @@ class Insert_transition {
     let destination = this.destination_box.value;
     let condition = this.condition_box.value;
     this.stm_table.add_condition(state_name, destination, condition);
-    let table_array = this.stm_table.get_object();
+    let table_array = this.stm_table.get_object().stm;
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
     update_graph(svg);
@@ -420,7 +528,7 @@ class Insert_transition {
 
   remove_transition(state_name, destination, condition) {
     this.stm_table.remove_transition(state_name, destination, condition);
-    let table_array = this.stm_table.get_object();
+    let table_array = this.stm_table.get_object().stm;
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
     update_graph(svg);
@@ -476,7 +584,7 @@ class Edit_transition {
 
     this.stm_table.edit_transition(state_name, old_destination, old_condition, new_destination, new_condition);
 
-    let table_array = this.stm_table.get_object();
+    let table_array = this.stm_table.get_object().stm;
     this.table_manager.add_stm_table(table_array);
     let svg = this.stm_table.get_svg();
     update_graph(svg);

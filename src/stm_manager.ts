@@ -66,17 +66,48 @@ class Base {
 export class Stm extends Base {
   private states: State[] = [];
 
+  private config = {
+    'state_name': '',
+    'clock_name': '',
+    'reset_condition': '',
+    'reset_state': '',
+    'reset_enable': false
+  };
 
-  get_hdl_code(language: string, type: string) {
-    let hdl_code: string = get_hdl_code(language, type, this.get_object());
+  get_hdl_code(language: string) {
+    let reset_condition = this.config.reset_condition;
+    let reset_state = this.config.reset_state;
+    if (this.config.reset_enable === false) {
+      reset_condition = '';
+      reset_state = '';
+    }
+    let hdl_code: string = get_hdl_code(language,
+      reset_condition, reset_state, this.config.state_name, this.config.clock_name, this.get_object());
     console.log(hdl_code);
     return hdl_code;
   }
 
+  get_config() {
+    return this.config;
+  }
+
+  set_config(config) {
+    this.config = config;
+  }
+
   load_json(json) {
     this.clear();
-    for (let i = 0; i < json.length; ++i) {
-      let state = json[i];
+    let config = {
+      'state_name': json.state_name,
+      'clock_name': json.clock_name,
+      'reset_condition': json.reset_condition,
+      'reset_state': json.reset_state,
+      'reset_enable': json.reset_enable
+    };
+    this.set_config(config);
+    let stm = json.stm;
+    for (let i = 0; i < stm.length; ++i) {
+      let state = stm[i];
       this.add_state(state.name);
       for (let j = 0; j < state.outputs.length; ++j) {
         let output = state.outputs[j];
@@ -108,6 +139,13 @@ export class Stm extends Base {
     }
   }
 
+  edit_output(state_name: string, old_output: string, new_output: string) {
+    let index: number = this.search_name_in_array(state_name, this.states);
+    if (index !== -1) {
+      this.states[index].edit_output(old_output, new_output);
+    }
+  }
+
   remove_output(state_name: string, output: string) {
     let index: number = this.search_name_in_array(state_name, this.states);
     if (index !== -1) {
@@ -127,6 +165,13 @@ export class Stm extends Base {
     let index: number = this.search_name_in_array(state_name, this.states);
     if (index !== -1) {
       this.states[index].edit_transition(old_destination, old_condition, new_destination, new_condition);
+    }
+  }
+
+  edit_state(state_name: string, old_output: string, new_output: string) {
+    let index: number = this.search_name_in_array(state_name, this.states);
+    if (index !== -1) {
+      this.states[index].edit_output(old_output, new_output);
     }
   }
 
@@ -202,8 +247,17 @@ export class Stm extends Base {
   get_object() {
     type transition_type = { destination: string, condition: string };
     type state_type = { name: string, transitions: transition_type[], outputs: string[] };
+    type stm_complete_type = { state_name: string, clock_name: string, reset_enable: boolean, reset_state: string, reset_condition: string, stm: state_type[] };
 
     let stm: state_type[] = [];
+    let stm_complete: stm_complete_type = { state_name: '', clock_name: '', reset_enable: false, reset_state: '', reset_condition: '', stm: [] };
+
+    stm_complete.state_name = this.config.state_name;
+    stm_complete.clock_name = this.config.clock_name;
+    stm_complete.reset_state = this.config.reset_state;
+    stm_complete.reset_condition = this.config.reset_condition;
+    stm_complete.reset_enable = this.config.reset_enable;
+
     this.states.forEach(function (i_state, i) {
       let transitions = i_state.get_transitions();
       let outputs = i_state.get_outputs();
@@ -224,7 +278,8 @@ export class Stm extends Base {
       });
       stm.push(state);
     });
-    return stm;
+    stm_complete.stm = stm;
+    return stm_complete;
   }
 }
 
@@ -254,6 +309,14 @@ export class State extends Base {
   }
   get_name() {
     return this.name;
+  }
+
+  edit_output(old_output: string, new_output: string) {
+    let index: number = this.search_output_in_array(old_output, this.outputs);
+    //Output exists
+    if (index !== -1) {
+      this.outputs[index].set_output(new_output);
+    }
   }
 
   add_output(output: string) {
@@ -318,13 +381,35 @@ export class State extends Base {
 ////////////////////////////////////////////////////////////////////////////////
 // Transition
 ////////////////////////////////////////////////////////////////////////////////
-class Transition {
+class Transition extends Base {
   private condition: Condition = new Condition();
   private destination: string = '';
+  private outputs: Output[] = [];
 
   clear() {
     this.condition = new Condition();
     this.destination = '';
+  }
+
+  add_output(output: string) {
+    let index: number = this.search_output_in_array(output, this.outputs);
+    //Output doesn't exist
+    if (index === -1) {
+      let output_n = new Output();
+      output_n.set_output(output);
+      this.outputs.push(output_n);
+    }
+  }
+
+  remove_output(output: string) {
+    let index: number = this.search_output_in_array(output, this.outputs);
+    if (index !== -1) {
+      this.outputs.splice(index, 1);
+    }
+  }
+
+  get_outputs() {
+    return this.outputs;
   }
 
   set_condition(condition: string) {

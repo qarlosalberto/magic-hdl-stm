@@ -71,7 +71,6 @@
         </div>
         <!-- Insert new transition -->
         <div class="insert_n" id="i_tran" hidden=true>
-          <!-- <input class="text_area" type="text" id="i_tran_dest" name="firstname" placeholder="Insert destination state..."> -->
           <label id="label_exp">Destination:</label>
           <select id="i_tran_dest"></select>
           <label id="label_exp">Condition:</label>
@@ -81,7 +80,6 @@
         </div>
         <!-- Edit transition -->
         <div class="insert_n" id="e_tran" hidden=true>
-          <!-- <input class="text_area" type="text" id="e_tran_dest" name="firstname" placeholder="Insert destination state..."> -->
           <label id="label_exp" for="e_tran_dest">Destination:</label>
           <select id="e_tran_dest"></select>
           <label id="label_exp">Condition:</label>
@@ -89,25 +87,35 @@
           <button class="button_stm_insert" id="e_tran_insert" type="button">Insert</button> 
           <button class="button_stm_cancel" id="e_tran_cancel" type="button">Cancel</button> 
         </div>
+        <!-- Edit transition -->
+        <div class="insert_n" id="e_output" hidden=true>
+          <label id="label_exp">Output:</label>
+          <input class="text_area" type="text" id="e_output_output" name="firstname" placeholder="Insert condition...">
+          <button class="button_stm_insert" id="e_output_insert" type="button">Insert</button> 
+          <button class="button_stm_cancel" id="e_output_cancel" type="button">Cancel</button> 
+        </div>
       </div>
     </div>
   </div>
  
   <div id="config">
-    <label for="config_0">Choose a language:</label>
+    <label for="config_0">Language:</label>
     <select id="config_0">
       <option value="vhdl">VHDL</option>
       <option value="verilog">Verilog</option>
     </select>
-    <label id="label_config_1" for="config_1">Choose a type:</label>
-    <select id="config_1">
-      <option value="one_process">One process</option>
-    </select>
-      ©Carlos Alberto Ruiz Naranjo
-      <a id="mail" href = "mailto: carlosruiznaranjo@gmail.com">carlosruiznaranjo@gmail.com</a>
+    <label id="label_config_1">Clock name:</label>
+    <input class="text_area" id="clock_name" type="text" value="clk">
+    <label id="label_config_1">State name:</label>
+    <input class="text_area" id="state_name" type="text" value="state">
+    <label id="label_config_1">Enable reset:</label>
+    <input class="text_area" id="reset_enable" type="checkbox" value="reset">
+    <label id="label_config_1">Reset condition:</label>
+    <input class="text_area" id="reset_signal" type="text" value="resetn = 0">
+    <label id="label_config_1">Reset state:</label>
+    <input class="text_area" id="reset_state" type="text" value="S0">
+    <a id="mail" href = "mailto: carlosruiznaranjo@gmail.com">carlosruiznaranjo@gmail.com</a>
   </div>
-
-
 
   <!-- Context menu -->
   <input id="inp" type='file' style="visibility:hidden;"/>
